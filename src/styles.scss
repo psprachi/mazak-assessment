@@ -1,0 +1,36 @@
+@use 'themes' as *;
+
+@use '@nebular/theme/styles/globals' as *;
+
+@include nb-install() {
+  @include nb-theme-global();
+}
+
+;
+/* You can add global styles to this file, and also import other style files */
+
+$background-color-gradient: linear-gradient(to right, #e6e6e6, #f1f1f1);
+
+.nb-theme-default nb-layout-header nav {
+  background: $background-color-gradient  !important;
+  box-shadow: none !important;
+}
+
+.nb-theme-default nb-layout .layout {
+  background: $background-color-gradient  !important;
+}
+
+.addContactDialog {
+  width: 100% !important;
+  height: 80% !important;
+
+  .cdk-visually-hidden {
+    width: 99% !important;
+    height: 99% !important;
+  }
+
+  nb-dialog-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}

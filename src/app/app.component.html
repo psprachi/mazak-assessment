@@ -1,0 +1,146 @@
+<nb-layout>
+
+  <nb-layout-header fixed>
+    <div class="headerContainer">
+      <div class="headerTitle">
+        <h1>DOZ Pharmacy - Contacts</h1>
+      </div>
+      <div class="headerOptions">
+        <button nbButton hero status="danger" (click)="addContact(addContactDialog)">Add Contact</button>
+        <button nbButton status="control">
+          <nb-icon icon="funnel"></nb-icon>
+        </button>
+        <button nbButton status="primary">
+          <nb-icon icon="search"></nb-icon>
+        </button>
+      </div>
+    </div>
+  </nb-layout-header>
+
+  <nb-layout-column>
+    <ng-container *ngIf="contactCardDataFavorite.length > 0">
+      <div class="favoriteContactContainer">
+        <h4 class="favoriteContactContainerTitle primaryTextColor">Favorites</h4>
+        <div class="favoriteContactCardsSection">
+          <nb-card size="tiny" *ngFor="let user of contactCardDataFavorite">
+            <nb-card-header>
+              <img class="profile" src="assets/users/user1.jpg" alt="user1">
+              <div class="contactCardTitle">
+                <h6>{{user.username}}</h6>
+                <p>{{user.role}}</p>
+              </div>
+              <div class="contactCardFavIcon">
+                <nb-icon icon="star"></nb-icon>
+              </div>
+            </nb-card-header>
+            <nb-card-body>
+              <p class="color-transparent-100"><b>{{user.status === 'active' ? 'Active' : 'Inactive'}}</b></p>
+              <p><b>{{user.location}}</b></p>
+              <div class="cardBodyOptions">
+                <span class="text-hint">
+                  <nb-icon icon="message-square"></nb-icon> Message
+                </span>
+                <span class="text-hint">
+                  <nb-icon icon="phone-call"></nb-icon> Call
+                </span>
+              </div>
+            </nb-card-body>
+          </nb-card>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="contactCardData.length > 0">
+      <div class="contactListContainer">
+        <h4 class="primaryTextColor">Contact List</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="userImageColumn"></th>
+              <th class="text-hint userNameColumn">Name</th>
+              <th class="text-hint userStatusColumn">Status</th>
+              <th class="text-hint userLocationColumn">Location</th>
+              <th class="text-hint userTagsColumn">Tags</th>
+              <th class="text-hint userActionsColumn">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of contactCardData">
+              <td>
+                <img class="profile" src="assets/users/user1.jpg" alt="user1">
+              </td>
+              <td>
+                <h6>{{user.username}}</h6>
+                <p class="text-hint">{{user.role}}</p>
+              </td>
+              <td>{{user.status === 'active' ? 'Active' : 'Inactive'}}</td>
+              <td>{{user.location}}</td>
+              <td>
+                <nb-tag-list>
+                  <nb-tag *ngFor="let tag of user.tags" [status]="appService.getTagColorBasedOnTagName(tag)"
+                    appearance="outline" [text]="tag"></nb-tag>
+                </nb-tag-list>
+              </td>
+              <td>
+                <div class="tableActions">
+                  <button nbButton status="control">
+                    <nb-icon icon="message-square"></nb-icon> Send Message
+                  </button>
+                  <button nbButton status="control">
+                    <nb-icon icon="phone-call"></nb-icon> Call
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="contactCardData.length === 0 && contactCardDataFavorite.length === 0">
+      <div class="noDataTemplate">
+        <div class="noDataTemplateContent">
+          <img src="assets/svgs/empty.svg" alt="empty">
+          <h4>No Contacts Found <br> Click On <i>Add Contact</i> button to add one</h4>
+        </div>
+      </div>
+    </ng-container>
+  </nb-layout-column>
+</nb-layout>
+<ng-template #addContactDialog let-data let-ref="dialogRef">
+  <form #addContactForm="ngForm" (ngSubmit)="addNewContact(ref)" (keydown.enter)="$event.preventDefault()">
+    <nb-card class="addContactCard">
+      <nb-card-header>
+        <h4>Add New Contact</h4>
+      </nb-card-header>
+      <nb-card-body>
+        <p>User name</p>
+        <input name="username" [(ngModel)]="addNewContactFormData.username" #username type="text" nbInput fullWidth
+          shape="semi-round" placeholder="Enter username" required>
+        <p>Location</p>
+        <input name="location" [(ngModel)]="addNewContactFormData.location" #location type="text" nbInput fullWidth
+          shape="semi-round" placeholder="Enter location" required>
+        <p>Role</p>
+        <input name="role" [(ngModel)]="addNewContactFormData.role" #role type="text" nbInput fullWidth
+          shape="semi-round" placeholder="Enter role" required>
+        <p>Status</p>
+        <nb-select name="status" [(ngModel)]="addNewContactFormData.status" #status fullWidth
+          placeholder="Select Status" shape="semi-round" [(selected)]="addNewContactFormData.status" required>
+          <nb-option value="active">Active</nb-option>
+          <nb-option value="inactive">Inactive</nb-option>
+        </nb-select>
+        <p>Tags</p>
+        <nb-tag-list (tagRemove)="onTagRemove($event)">
+          <nb-tag *ngFor="let tree of trees" [text]="tree" removable></nb-tag>
+          <input shape="semi-round" type="text" nbTagInput (tagAdd)="onTagAdd($event)" fullWidth required>
+        </nb-tag-list>
+        <p>
+          <nb-toggle name="isFavorite" [(ngModel)]="addNewContactFormData.isFavorite" labelPosition="start">Favorite
+          </nb-toggle>
+        </p>
+      </nb-card-body>
+      <nb-card-footer class="addContactCardFooter">
+        <button type="button" nbButton (click)="ref.close()">Close</button>
+        <button type="submit" [disabled]="addContactForm.invalid" status="primary" nbButton>Submit</button>
+      </nb-card-footer>
+    </nb-card>
+  </form>
+</ng-template>
