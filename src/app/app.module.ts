@@ -7,6 +7,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NbThemeModule, NbLayoutModule, NbButtonModule, NbIconModule, NbCardModule, NbTagModule, NbDialogModule, NbInputModule, NbSelectModule, NbToggleModule } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { FormsModule } from '@angular/forms';
+import { SharedModule } from './shared/shared.module';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { FormsModule } from '@angular/forms';
     NbSelectModule,
     NbToggleModule,
     FormsModule,
-    NbDialogModule.forRoot()
+    NbDialogModule.forRoot(),
+    SharedModule,
+    NgxPaginationModule
   ],
   providers: [],
   bootstrap: [AppComponent]

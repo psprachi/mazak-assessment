@@ -51,7 +51,11 @@
     </ng-container>
     <ng-container *ngIf="contactCardData.length > 0">
       <div class="contactListContainer">
-        <h4 class="primaryTextColor">Contact List</h4>
+        <div class="tableHeader">
+          <h4 class="primaryTextColor">Contact List</h4>
+          <input type="text" nbInput shape="round" placeholder="Search by Username" #dataFilter
+            [(ngModel)]="dataFilterInputVariable">
+        </div>
         <table>
           <thead>
             <tr>
@@ -64,7 +68,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let user of contactCardData">
+            <tr *ngFor="let user of contactCardData | filter: dataFilterInputVariable | paginate: paginationConfig">
               <td>
                 <img class="profile" src="assets/users/user1.jpg" alt="user1">
               </td>
@@ -93,13 +97,17 @@
             </tr>
           </tbody>
         </table>
+        <pagination-controls [maxSize]="100" [directionLinks]="true" [responsive]="true" previousLabel="Previous page"
+          nextLabel="Next page" (pageChange)="onPageChange($event)">
+        </pagination-controls>
       </div>
     </ng-container>
     <ng-container *ngIf="contactCardData.length === 0 && contactCardDataFavorite.length === 0">
       <div class="noDataTemplate">
         <div class="noDataTemplateContent">
           <img src="assets/svgs/empty.svg" alt="empty">
-          <h4>No Contacts Found <br> Click On <i>Add Contact</i> button to add one</h4>
+          <h4>No Contacts Found <br> Click On <i>Add Contact</i> button to add one <br> Or You can Start With <a class="dummyDataText" (click)="generateSamepleData()">Dummy Data</a>
+          </h4>
         </div>
       </div>
     </ng-container>
@@ -111,7 +119,7 @@
       <nb-card-header>
         <h4>Add New Contact</h4>
       </nb-card-header>
-      <nb-card-body>
+      <nb-card-body class="addContactDialogCardBody">
         <p>User name</p>
         <input name="username" [(ngModel)]="addNewContactFormData.username" #username type="text" nbInput fullWidth
           shape="semi-round" placeholder="Enter username" required>
@@ -129,7 +137,7 @@
         </nb-select>
         <p>Tags</p>
         <nb-tag-list (tagRemove)="onTagRemove($event)">
-          <nb-tag *ngFor="let tree of trees" [text]="tree" removable></nb-tag>
+          <nb-tag *ngFor="let tree of tagsFromSet" [text]="tree" removable></nb-tag>
           <input shape="semi-round" type="text" nbTagInput (tagAdd)="onTagAdd($event)" fullWidth required>
         </nb-tag-list>
         <p>
