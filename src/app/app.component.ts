@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NbDialogService, NbTagComponent, NbTagInputAddEvent } from '@nebular/theme';
+import { PaginationInstance } from 'ngx-pagination';
 import { AppService } from './app.service';
 
 @Component({
@@ -22,14 +23,22 @@ export class AppComponent {
     tags: []
   };
 
-  trees: Set<string> = new Set<string>();
+  paginationConfig: PaginationInstance = {
+    itemsPerPage: 10,
+    currentPage: 1
+  };
+
+  dummyDataItemCount: number = 50;
+
+  tagsFromSet: Set<string> = new Set<string>();
 
   constructor(
     public appService: AppService,
     private dialogService: NbDialogService
   ) {
-
   }
+
+  dataFilterInputVariable: string = '';
 
   addContact(addContactDialogRef: any): void {
     const dialog = this.dialogService.open(addContactDialogRef, {
@@ -38,26 +47,28 @@ export class AppComponent {
       closeOnBackdropClick: false
     });
     dialog.onClose.subscribe(dialogData => {
-      if (dialogData.isFavorite) {
-        this.contactCardDataFavorite.push(Object.assign({}, dialogData));
+      if(dialogData && dialogData !== undefined) {
+        if (dialogData.isFavorite) {
+          this.contactCardDataFavorite.push(Object.assign({}, dialogData));
+        }
+        this.contactCardData.push(Object.assign({}, dialogData));
+        this.setDefaultValuesForContactDataForm();
       }
-      this.contactCardData.push(Object.assign({}, dialogData));
-      this.setDefaultValuesForContactDataForm();
     });
   }
 
   addNewContact(dialogRef: any): void {
-    this.addNewContactFormData.tags = Array.from(this.trees);
+    this.addNewContactFormData.tags = Array.from(this.tagsFromSet);
     dialogRef.close(this.addNewContactFormData);
   }
 
   onTagRemove(tagToRemove: NbTagComponent): void {
-    this.trees.delete(tagToRemove.text);
+    this.tagsFromSet.delete(tagToRemove.text);
   }
 
   onTagAdd({ value, input }: NbTagInputAddEvent): void {
     if (value) {
-      this.trees.add(value)
+      this.tagsFromSet.add(value)
     }
     input.nativeElement.value = '';
   }
@@ -72,6 +83,17 @@ export class AppComponent {
       status: 'active',
       tags: []
     }
+  }
+
+  generateSamepleData(): void {
+    for(let i = 0 ; i < this.dummyDataItemCount ; i++) {
+      this.contactCardData.push(this.appService.generateSampleData());
+    }
+    this.contactCardDataFavorite = this.contactCardData.filter(contact => contact.isFavorite = true);
+  }
+
+  onPageChange(pageNumber: number) {
+    this.paginationConfig.currentPage = pageNumber;
   }
 
 }
